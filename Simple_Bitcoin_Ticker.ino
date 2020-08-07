@@ -33,7 +33,7 @@ const int httpsPort = 443;
 
 // Use web browser to view and copy
 // SHA1 fingerprint of the certificate
-const char fingerprint[] PROGMEM = "d3 79 2d dd ac 1f ed 90 8a a9 c1 c0 74 2d cf ff 6d 86 bf 0a";
+const char fingerprint[] PROGMEM = "335b4fc7b2e210256ed6f2f900744ea21f436195";
 
 // Use WiFiClientSecure class to create TLS connection
   WiFiClientSecure client;
@@ -74,6 +74,7 @@ Serial.println(lc.getDeviceCount());
       /* and clear the display */
       lc.clearDisplay(index);
   }
+   printPrice(99999999);
 }
 
 
@@ -140,10 +141,28 @@ void loop() {
   client.stop();
 
   // parse response
-  DynamicJsonDocument jsonDocument(1024);
+  DynamicJsonDocument jsonDocument(2024);
   DeserializationError error = deserializeJson(jsonDocument, response);
   if (error) {
     Serial.println("Deserialization failed");
+     
+     switch (error.code()) {
+      case DeserializationError::Ok:
+          Serial.print(F("Deserialization succeeded"));
+          break;
+      case DeserializationError::InvalidInput:
+          Serial.print(F("Invalid input!"));
+          break;
+      case DeserializationError::NoMemory:
+          Serial.print(F("Not enough memory"));
+          Serial.println("doc capacity: ");
+          Serial.print(jsonDocument.capacity());
+          break;
+      default:
+          Serial.print(F("Deserialization failed"));
+          break;
+    }
+     
     delay();
     return;
   }
