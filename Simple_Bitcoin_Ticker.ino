@@ -112,29 +112,16 @@ void loop() {
   }
 
   
-  // skip HTTP headers
-  while (client.connected()) {
-    String line = client.readStringUntil('\n');
-    Serial.println(line);
-    if (line == "\r") {
-      break;
-    }
-  }
-
-  // skip content length
-  if (client.connected()) {
-    String line = client.readStringUntil('\n');
-    Serial.println(line);
-  }
-
   // get response
   String response = "";
-  while (client.connected()) {
+  //while (client.connected()) {
+  while (client.available()) {
     String line = client.readStringUntil('\n');
     Serial.println(line);
     line.trim();
-    if (line != "\r") {
-      response += line;
+    if (line.indexOf("status") > 0) {
+      response = line;
+      break;
     }
   }
 
